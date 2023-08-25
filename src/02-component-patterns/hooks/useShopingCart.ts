@@ -3,40 +3,25 @@ import { Product, ProductInCart } from "../interfaces/interfaces";
 
 export const useShopingCart = () => {
 
-    const [shoppingCart, setShoppingCart] = useState<{ [key:string]: ProductInCart }>({});
+    const [shoppingCart, setShoppingCart] = useState<{ [key: string]: ProductInCart }>({});
 
-    const onProductCountChange= ({count, product }:{count:number, product:Product }) => {
-        // console.log( count,product )
+    const onProductCountChange = ({ count, product }: { count: number, product: Product }) => {
 
-        setShoppingCart( oldShoppingCart => {
+        setShoppingCart(oldShoppingCart => {
 
-            const productInCart: ProductInCart = oldShoppingCart[product.id] || {...product, count:0} ;
+            if (count === 0) {
 
-            if(Math.max(productInCart.count + count, 0) > 0 ){
-                productInCart.count += count;
-                return{
+                const { [product.id]: toDelete, ...rest } = oldShoppingCart;
+                return rest;
+            } else {
+                return {
                     ...oldShoppingCart,
-                    [product.id]: productInCart
+                    [product.id]: { ...product, count }
                 }
             }
-
-            //Borrar el producto
-            const { [product.id]: toDelete, ...rest } = oldShoppingCart;
-            return rest;
-          
-            // if(count === 0){
-
-            //     const { [product.id]: toDelete, ...rest } = oldShoppingCart;
-            //     return rest;
-            // }else{
-            // return{
-            //     ...oldShoppingCart,
-            //     [ product.id ] : {...product, count}
-            // }
-        // }
         })
     }
- 
+
     return {
         shoppingCart,
         onProductCountChange
